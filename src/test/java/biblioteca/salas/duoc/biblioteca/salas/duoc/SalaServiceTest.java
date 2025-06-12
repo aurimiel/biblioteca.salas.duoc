@@ -12,7 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.mockito.Mock;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public class SalaServiceTest {
     @Autowired
     private SalaService salaService;
 
-    @Mock
+    @MockitoBean
     private SalaRepository salaRepository;
 
     @Test

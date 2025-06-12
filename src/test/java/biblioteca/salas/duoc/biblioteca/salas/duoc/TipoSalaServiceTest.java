@@ -3,64 +3,70 @@ package biblioteca.salas.duoc.biblioteca.salas.duoc;
 import biblioteca.salas.duoc.biblioteca.salas.duoc.model.TipoSala;
 import biblioteca.salas.duoc.biblioteca.salas.duoc.repository.TipoSalaRepository;
 import biblioteca.salas.duoc.biblioteca.salas.duoc.service.TipoSalaService;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Transactional // Para que los datos se borren al finalizar cada test
-public class TipoSalaServiceIntegrationTest {
+public class TipoSalaServiceTest {
 
     @Autowired
     private TipoSalaService tipoSalaService;
 
-    @Autowired
+    @MockitoBean
     private TipoSalaRepository tipoSalaRepository;
-
-    @BeforeEach
-    public void setUp() {
-        tipoSalaRepository.deleteAll(); // Limpieza por si hay residuos
-        tipoSalaRepository.save(new TipoSala(null, "Sala Estudio"));
-    }
 
     @Test
     public void testFindAll() {
+        when(tipoSalaRepository.findAll()).thenReturn(List.of(new TipoSala(1, "Sala Estudio")));
+
         List<TipoSala> tipos = tipoSalaService.findAll();
+
         assertNotNull(tipos);
         assertEquals(1, tipos.size());
+        assertEquals("Sala Estudio", tipos.get(0).getNombre());
     }
 
     @Test
     public void testFindById() {
-        TipoSala tipoGuardado = tipoSalaRepository.save(new TipoSala(null, "Laboratorio"));
-        TipoSala encontrado = tipoSalaService.findById(tipoGuardado.getIdTipo());
+        TipoSala tipoSala = new TipoSala(1, "Laboratorio");
+        when(tipoSalaRepository.findById(1)).thenReturn(Optional.of(tipoSala));
+
+        TipoSala encontrado = tipoSalaService.findById(1);
 
         assertNotNull(encontrado);
+        assertEquals(1, encontrado.getIdTipo());
         assertEquals("Laboratorio", encontrado.getNombre());
     }
 
     @Test
     public void testSave() {
         TipoSala tipoSala = new TipoSala(null, "Sala Computación");
-        TipoSala saved = tipoSalaService.save(tipoSala);
+        TipoSala guardado = new TipoSala(1, "Sala Computación");
 
-        assertNotNull(saved.getIdTipo());
-        assertEquals("Sala Computación", saved.getNombre());
+        when(tipoSalaRepository.save(tipoSala)).thenReturn(guardado);
+
+        TipoSala resultado = tipoSalaService.save(tipoSala);
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.getIdTipo());
+        assertEquals("Sala Computación", resultado.getNombre());
     }
 
     @Test
     public void testDeleteById() {
-        TipoSala tipoSala = tipoSalaRepository.save(new TipoSala(null, "Temporal"));
-        Integer id = tipoSala.getIdTipo();
+        doNothing().when(tipoSalaRepository).deleteById(1);
 
-        tipoSalaService.deleteById(id);
+        tipoSalaService.deleteById(1);
 
-        assertFalse(tipoSalaRepository.findById(id).isPresent());
+        verify(tipoSalaRepository, times(1)).deleteById(1);
     }
 }

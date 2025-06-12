@@ -6,28 +6,26 @@ import biblioteca.salas.duoc.biblioteca.salas.duoc.model.Sala;
 import biblioteca.salas.duoc.biblioteca.salas.duoc.repository.ReservaRepository;
 import biblioteca.salas.duoc.biblioteca.salas.duoc.service.ReservaService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.mockito.Mock;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class ReservaServiceTest {
 
     @Autowired
     private ReservaService reservaService;
 
-    @Mock
+    @MockitoBean
     private ReservaRepository reservaRepository;
 
     @Test
